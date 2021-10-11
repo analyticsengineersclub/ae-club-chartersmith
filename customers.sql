@@ -1,22 +1,22 @@
-SELECT 
+with orders as (
+	select
+		customer_id,
+		min(created_at) as first_order,
+		count(*) as count
+	from `analytics-engineers-club.coffee_shop.orders
+       group by 1
+),
+customers as (
+	select *
+       	from `analytics-engineers-club.coffee_shop.customers`
+)
 
-a.id as customer_id,
-a.name,
-a.email,
-b.first_order,
-b.count as number_of_orders
+select 
+	customers.id,
+	customers.name,
+	customers.email,
+	orders.first_order,
+	orders.count
+from customers
+left join orders on customers.id = orders.customer_id
 
-FROM `analytics-engineers-club.coffee_shop.customers` a
-
-JOIN
-
-(SELECT 
-customer_id,
-MIN(created_at) as first_order,
-COUNT(*) as count
-from `analytics-engineers-club.coffee_shop.orders`
-GROUP BY 1) b 
-
-ON a.id = b.customer_id 
-
-limit 10;
